@@ -58,6 +58,34 @@ func main() {
 }
 ```
 
+### Example: registration with email verification PIN
+
+If your Auth server is configured to send an email OTP/PIN for signup, you can
+register the user first and then verify with `VerifyForUser` using that PIN.
+
+```go
+func SupabaseRegisterWithEmailPIN(email, password, pin string) (*types.VerifyForUserResponse, error) {
+	client := auth.New(projectReference, apiKey)
+
+	if _, err := client.Signup(types.SignupRequest{
+		Email:    email,
+		Password: password,
+	}); err != nil {
+		return nil, err
+	}
+
+	return client.VerifyForUser(types.VerifyForUserRequest{
+		Type:       types.VerificationTypeSignup,
+		Token:      pin,
+		Email:      email,
+		RedirectTo: "https://your-app.com/auth/callback",
+	})
+}
+```
+
+If you are not using PIN/OTP for signup email verification, use `Verify(...)`
+with the token provided in the email link instead of `VerifyForUser(...)`.
+
 ## Options
 
 The client can be customized with the options below.
