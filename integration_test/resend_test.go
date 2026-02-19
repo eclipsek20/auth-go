@@ -13,6 +13,7 @@ func TestResend(t *testing.T) {
 
 	email := randomEmail()
 	err := client.Resend(types.ResendRequest{
+		Type:  types.ResendTypeSignup,
 		Email: email,
 	})
 	assert.NoError(err)

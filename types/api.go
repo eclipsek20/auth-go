@@ -402,10 +402,20 @@ type RecoverRequest struct {
 	SecurityEmbed
 }
 
+type ResendType string
+
+const (
+	ResendTypeSignup      ResendType = "signup"
+	ResendTypeEmailChange ResendType = "email_change"
+	ResendTypeSMS         ResendType = "sms"
+	ResendTypePhoneChange ResendType = "phone_change"
+)
+
 type ResendRequest struct {
-	Email           string `json:"email,omitempty"`
-	Phone           string `json:"phone,omitempty"`
-	EmailRedirectTo string `json:"-"`
+	Type            ResendType `json:"type"`
+	Email           string     `json:"email,omitempty"`
+	Phone           string     `json:"phone,omitempty"`
+	EmailRedirectTo string     `json:"-"`
 }
 
 type ExternalProviders struct {
