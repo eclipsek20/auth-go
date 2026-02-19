@@ -9,7 +9,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/supabase-community/auth-go/types"
+	"github.com/eclipsek20/auth-go/types"
 )
 
 const signupPath = "/signup"
