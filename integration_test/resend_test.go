@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/supabase-community/auth-go/types"
+	"github.com/eclipsek20/auth-go/types"
 )
 
 func TestResend(t *testing.T) {
@@ -13,6 +13,7 @@ func TestResend(t *testing.T) {
 
 	email := randomEmail()
 	err := client.Resend(types.ResendRequest{
+		Type:  types.ResendTypeSignup,
 		Email: email,
 	})
 	assert.NoError(err)

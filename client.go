@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/supabase-community/auth-go/endpoints"
+	"github.com/eclipsek20/auth-go/endpoints"
 )
 
 var (
