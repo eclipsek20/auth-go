@@ -1,4 +1,4 @@
-module github.com/supabase-community/auth-go
+module github.com/eclipsek20/auth-go
 
 go 1.18
 
