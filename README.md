@@ -23,6 +23,13 @@ The endpoints for SSO SAML are not tested and `POST /sso/saml/acs` does not prov
 go get github.com/supabase-community/auth-go
 ```
 
+If you are consuming a fork, keep imports as `github.com/supabase-community/auth-go`
+and use a `replace` directive in your app `go.mod`, for example:
+
+```go
+replace github.com/supabase-community/auth-go => github.com/eclipsek20/auth-go v0.0.0-00010101000000-000000000000
+```
+
 ### Usage
 
 ```go
@@ -57,6 +64,34 @@ func main() {
     log.Printf("%+v", resp)
 }
 ```
+
+### Example: registration with email verification PIN
+
+If your Auth server is configured to send an email OTP/PIN for signup, you can
+register the user first and then verify with `VerifyForUser` using that PIN.
+
+```go
+func SupabaseRegisterWithEmailPIN(email, password, pin string) (*types.VerifyForUserResponse, error) {
+	client := auth.New(projectReference, apiKey)
+
+	if _, err := client.Signup(types.SignupRequest{
+		Email:    email,
+		Password: password,
+	}); err != nil {
+		return nil, err
+	}
+
+	return client.VerifyForUser(types.VerifyForUserRequest{
+		Type:       types.VerificationTypeSignup,
+		Token:      pin,
+		Email:      email,
+		RedirectTo: "https://your-app.com/auth/callback",
+	})
+}
+```
+
+If you are not using PIN/OTP for signup email verification, use `Verify(...)`
+with the token provided in the email link instead of `VerifyForUser(...)`.
 
 ## Options
 
