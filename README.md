@@ -1,9 +1,9 @@
 # auth-go
 
-![example branch parameter](https://github.com/supabase-community/auth-go/actions/workflows/test.yaml/badge.svg?branch=main)
+![example branch parameter](https://github.com/eclipsek20/auth-go/actions/workflows/test.yaml/badge.svg?branch=main)
 [![codecov](https://codecov.io/gh/supabase-community/auth-go/branch/main/graph/badge.svg?token=JQQJKETMRX)](https://codecov.io/gh/supabase-community/auth-go)
 ![GitHub](https://img.shields.io/github/license/supabase-community/auth-go)
-[![Go Reference](https://pkg.go.dev/badge/github.com/supabase-community/auth-go.svg)](https://pkg.go.dev/github.com/supabase-community/auth-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/eclipsek20/auth-go.svg)](https://pkg.go.dev/github.com/eclipsek20/auth-go)
 
 A Golang client library for the [Supabase Auth](https://github.com/supabase/auth) API.
 
@@ -20,8 +20,30 @@ The endpoints for SSO SAML are not tested and `POST /sso/saml/acs` does not prov
 ### Install
 
 ```sh
-go get github.com/supabase-community/auth-go
+go get github.com/eclipsek20/auth-go
 ```
+
+If your app still imports the upstream path `github.com/supabase-community/auth-go`,
+use a `replace` directive in your app `go.mod` to point at this fork:
+
+```go
+replace github.com/supabase-community/auth-go => github.com/eclipsek20/auth-go v0.0.0-00010101000000-000000000000
+```
+
+> **Important:** import both `auth` and `types` from the same module path in your app.
+> Do not mix `github.com/supabase-community/auth-go/...` with
+> `github.com/eclipsek20/auth-go/...` in one build.
+
+### Troubleshooting: mixed-type compile errors
+
+If you see errors like:
+
+```text
+cannot use github.com/eclipsek20/auth-go/types.TokenRequest as github.com/supabase-community/auth-go/types.TokenRequest
+```
+
+then your project has mixed imports. Use one path consistently (recommended here:
+`github.com/eclipsek20/auth-go`) for both `auth` and `types` imports.
 
 ### Usage
 
@@ -29,8 +51,8 @@ go get github.com/supabase-community/auth-go
 package main
 
 import (
-    "github.com/supabase-community/auth-go"
-    "github.com/supabase-community/auth-go/types"
+    "github.com/eclipsek20/auth-go"
+    "github.com/eclipsek20/auth-go/types"
 )
 
 const (
@@ -57,6 +79,34 @@ func main() {
     log.Printf("%+v", resp)
 }
 ```
+
+### Example: registration with email verification PIN
+
+If your Auth server is configured to send an email OTP/PIN for signup, you can
+register the user first and then verify with `VerifyForUser` using that PIN.
+
+```go
+func SupabaseRegisterWithEmailPIN(email, password, pin string) (*types.VerifyForUserResponse, error) {
+	client := auth.New(projectReference, apiKey)
+
+	if _, err := client.Signup(types.SignupRequest{
+		Email:    email,
+		Password: password,
+	}); err != nil {
+		return nil, err
+	}
+
+	return client.VerifyForUser(types.VerifyForUserRequest{
+		Type:       types.VerificationTypeSignup,
+		Token:      pin,
+		Email:      email,
+		RedirectTo: "https://your-app.com/auth/callback",
+	})
+}
+```
+
+If you are not using PIN/OTP for signup email verification, use `Verify(...)`
+with the token provided in the email link instead of `VerifyForUser(...)`.
 
 ## Options
 
