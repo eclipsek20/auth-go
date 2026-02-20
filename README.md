@@ -21,6 +21,7 @@ The endpoints for SSO SAML are not tested and `POST /sso/saml/acs` does not prov
 
 ```sh
 go get github.com/eclipsek20/auth-go
+
 ```
 
 If your app still imports the upstream path `github.com/supabase-community/auth-go`,
